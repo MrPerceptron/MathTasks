@@ -1,23 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
 
 namespace Task2
 {
-    internal class Program
+    public class Program
     {
-        static void Main() // ДОБАВИТЬ ВОЗМОЖНОСТЬ ПОЛУЧАТЬ СРАЗУ МАССИВ РАЗЛИЧНОЙ ДЛИНЫ ПАЛИНДРОМОВ arr[]{101,1111,20002} и т.пы
+        const int NUMBERLENGTH = 9;
+
+        static void Main()
         {
             var sw = new Stopwatch();
-            sw.Start();
 
-            var arr = Palindrom.GetPalendromArr(7);
-            Console.WriteLine("Main ================================================================== Main");
+            sw.Start(); // -<<<<<
+
+            var arr = Palindrom.GetPalendromArr(NUMBERLENGTH);
             Palindrom.ShowArray(arr);
 
-            sw.Stop();
-            Console.WriteLine($"ElapsedMilliseconds: {sw.ElapsedMilliseconds}\tElapsed: {sw.Elapsed}"); // ElapsedMilliseconds: 7950       Elapsed: 00:00:07.9509873
+            sw.Stop(); // -<<<<<
+
+            Console.WriteLine($"ElapsedMilliseconds: {sw.ElapsedMilliseconds}\tElapsed: {sw.Elapsed}"); // 19 - 43 ||
+            Console.WriteLine($"Является ли корректное количество палиндромов: {arr.Count == Palindrom.GetCountOfReceivedPalindromes(NUMBERLENGTH)}");
         }
     }
 
@@ -42,7 +45,7 @@ namespace Task2
 
         public static bool IsDivideBy(int denominator, int numerator)
         {
-            return (int)denominator / numerator * numerator == denominator;
+            return denominator / numerator * numerator == denominator;
         }
 
         public static bool IsPalindromNumber(int palindromNumber)
@@ -81,8 +84,7 @@ namespace Task2
             int[][] prePalindromArrays = new int[(lenOfNumber - 1) / 2][];
 
             List<int> palindromArr = new(countOfReceivedPalindromes);
-            var thread = new Thread(() => FillDependentPalindromes(prePalindromArrays, lenOfNumber));
-            thread.Start();
+            FillDependentPalindromes(prePalindromArrays, lenOfNumber);
 
             for (int i = 0; i < countOfReceivedPalindromes; i++)
             {
@@ -93,7 +95,6 @@ namespace Task2
                 }
                 else
                 {
-                    thread.Join();
                     for (int j = 0; j < prePalindromArrays.Length; j++)
                     {
                         if (lenOfNumber % 2 == 0 && lenOfNumber > 2)
@@ -125,6 +126,7 @@ namespace Task2
             }
         }
     }
+    
     /*
                1! При переходе на новвую длину цифр нужно прибавлять <2>
                2! При итерации на следующую единицу, нужно прибавлять <1>, в ином случа, при итерации на следующий десяток, сотню, тысячу и т.к прибалять <11>

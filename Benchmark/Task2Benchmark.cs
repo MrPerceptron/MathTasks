@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using System.Linq;
 using Task2;
 
 namespace Benchmark
@@ -8,24 +9,16 @@ namespace Benchmark
     [RankColumn]
     public class Task2Benchmark
     {
-        private Palindrom _palindrom = new();
-
         [Benchmark]
-        public void GetPalendromArr1()
+        public void CheckGetPalendromArr4()
         {
-            Palindrom.GetPalendromArr(1);
+            Task2.Program.TestCode();
         }
 
         [Benchmark]
-        public void GetPalendromArr5()
+        public void GetPalendromArr4()
         {
-            Palindrom.GetPalendromArr(5);
-        }
-
-        [Benchmark]
-        public void GetPalendromArr9()
-        {
-            Palindrom.GetPalendromArr(9);
+            Palindrom.GetPalendromArr(9).TakeLast(5).ToList();
         }
     }
 }
