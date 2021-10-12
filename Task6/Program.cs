@@ -40,26 +40,12 @@ namespace Task6
                     { ItemPosition = Condition.Position.LastNameEqual }
             };
             Array.Sort(conditions);
-
             //var cond = conditions[0];
 
             var conditionInfoArr = conditions.Select(x => x.AllConditions.Select(GetPropNameAndRequiredValue).ToList()).ToList();
-            new MyClass(conditionInfoArr);
-            #region
-            //List<(string propertyName, string neededValue)[]> a = new(); // Массив логически связанных условий
-            //for (int i = 0; i < conditionInfoArr.Length; i++)
-            //{
-            //    for (int j = 0; j < conditionInfoArr.Length; j++)
-            //    {
-            //        if (i != j && conditionInfoArr[i].Intersect(conditionInfoArr[j]).Any())
-            //        {
-            //            a.Add(conditionInfoArr[i]); // ТУТ ЧТО-ТО СДЕЛАТЬ С СОВПАДАЮЩИМИ ПО ЛОГИКЕ УСЛОВИЯМИ
-            //        }
-            //    }
-            //}
+            SortByLogicalRelationship(conditionInfoArr);
 
-            //OperateMainLogic(cond, persons, conditionInfoArr[0]);
-            #endregion
+            new MyClass(conditionInfoArr);
         }
         public class MyClass
         {
@@ -67,16 +53,15 @@ namespace Task6
             CircleList<Person> _result;
             public MyClass(List<List<(string propertyName, string neededValue)>> conditionInfo)
             {
-                _result = new(conditionInfo.Count) {};
-                AddToResult(conditionInfo[0]);
+                ShowConditionInfoArr(conditionInfo);
+                //_result = new(conditionInfo.Count);
+                //AddToResult(conditionInfo[0]);
 
-                
-                conditionInfo.RemoveAt(0);
-                _conditionInfo = conditionInfo;
-                ShowArray();
+                //conditionInfo.RemoveAt(0);
+                //_conditionInfo = conditionInfo;
+                //ShowArray();
             }
-            void F(){}
-            void AddToResult(List<(string propertyName, string neededValue)> conditionInfo) 
+            void AddToResult(List<(string propertyName, string neededValue)> conditionInfo)
             {
                 for (int i = 0; i < conditionInfo.Count; i++)
                 {
@@ -88,9 +73,20 @@ namespace Task6
             }
             void FirstAction()
             {
-                
-            }
 
+            }
+            public void ShowConditionInfoArr(List<List<(string propertyName, string neededValue)>> conditionInfo) 
+            {
+                foreach (var item1 in conditionInfo)
+                {
+                    foreach (var item in item1)
+                    {
+                        string t = item.propertyName.Length == 8 ? "\t\t" : "\t";
+                        Console.WriteLine($"propertyName = {item.propertyName}{t}neededValue = {item.neededValue}");
+                    }
+                    Console.WriteLine();
+                }
+            }
             public void ShowArray()
             {
                 foreach (var item in _result)
@@ -99,7 +95,29 @@ namespace Task6
                 }
             }
         }
-
+        static void SortByLogicalRelationship(List<List<(string propertyName, string neededValue)>> conditionInfo)
+        {
+            //conditionInfo = conditionInfo.Select(x => x.SkipWhile(y => y.neededValue != x[0].neededValue).ToList()).ToList();
+            List<List<(string propertyName, string neededValue)>> newArr = new(conditionInfo.Count);
+            for (int i = 0; i < conditionInfo.Count; i++)
+            {
+                for (int j = 0; j < conditionInfo[i].Count; j++)
+                {
+                    for (int k = 0; k < conditionInfo.Count; k++)
+                    {
+                        for (int l = 0; l < conditionInfo[k].Count; l++)
+                        {
+                            if ( conditionInfo[i][j].neededValue == conditionInfo[k][l].neededValue && !newArr.Contains(conditionInfo[k]))
+                            {
+                                newArr.Add(conditionInfo[k]);
+                                (i, j, k, l) = (i++, 0, k++, 0);
+                            }
+                        }
+                    }
+                }
+            }
+            conditionInfo = newArr;
+        }
         public static void OperateMainLogic(Condition condition, CircleList<Person> persons, (string propertyName, string neededValue)[] conditionInfo)
         {
             if (condition.ItemPosition == Condition.Position.Between)
