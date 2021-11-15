@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Task2
 {
@@ -24,6 +27,7 @@ namespace Task2
         }
     }
 
+        
     public class Palindrom
     {
         private static Dictionary<int, Dictionary<int, int>> _degreeDictionary = new()
@@ -129,7 +133,7 @@ namespace Task2
     
     /*
                1! При переходе на новвую длину цифр нужно прибавлять <2>
-               2! При итерации на следующую единицу, нужно прибавлять <1>, в ином случа, при итерации на следующий десяток, сотню, тысячу и т.к прибалять <11>
+               2! При итерации на следующую единицу, нужно прибавлять <1>, в ином случае, при итерации на следующий десяток, сотню, тысячу и т.к прибавлять <11>
                3! При нахождении единичного нового палиндрома нужно прибавлять <1>, в ином случае, <11>
                
                 1: 8 + 1 = 9 + 2 = <11>                                             можно получить <9> палиндромов

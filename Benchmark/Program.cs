@@ -1,5 +1,4 @@
 ﻿using BenchmarkDotNet.Running;
-using System;
 
 namespace Benchmark
 {
@@ -7,7 +6,7 @@ namespace Benchmark
     {
         static void Main()
         {
-            BenchmarkRunner.Run<Task2Benchmark>();
+            BenchmarkRunner.Run<Benchmark>();
         }
     }
 }

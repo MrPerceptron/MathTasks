@@ -1,24 +1,26 @@
 ﻿using BenchmarkDotNet.Attributes;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using Task2;
+using System.Security.Cryptography;
+using System.Text;
+using Task6;
 
 namespace Benchmark
 {
     [BenchmarkCategory]
     [MemoryDiagnoser]
     [RankColumn]
-    public class Task2Benchmark
+    public class Benchmark
     {
-        [Benchmark]
-        public void CheckGetPalendromArr4()
-        {
-            Task2.Program.TestCode();
-        }
 
         [Benchmark]
-        public void GetPalendromArr4()
+        public void Test1()
         {
-            Palindrom.GetPalendromArr(9).TakeLast(5).ToList();
+        }
+        [Benchmark]
+        public void Test2()
+        {
         }
     }
 }

@@ -1,150 +1,102 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 /*
-   Пять дам завтракают, сидя за круглым столом. Миз Осборн сидит между Миз Льюис и Миз Мартин.
-   Эллен сидит между Кэти и Миз Норрис. Миз Льюис сидит между Эллен и Эллис.
-   Кэти и Дорис — сестры. Слева от Бетти сидит Миз Паркс, а справа от нее — Миз Мартин.
-   Сопоставьте имена и фамилии.
+Пять дам завтракают, сидя за круглым столом. Миз Осборн сидит между Миз Льюис и Миз Мартин.
+Эллен сидит между Кэти и Миз Норрис. Миз Льюис сидит между Эллен и Эллис.
+Кэти и Дорис — сестры. Слева от Бетти сидит Миз Паркс, а справа от нее — Миз Мартин.
+Сопоставьте имена и фамилии.
 */
+
+// TODO: Зарефакторить conditionInfoArr
+// TODO: Заменить IList на Readonly в классах стратегии
 namespace Task6
 {
-    internal class Program
+    public static class Program
     {
-        static void Main() // Найти логическую связь между условиями
+        #region
+        public class ArrEqualityComparer : IEqualityComparer<List<int>>
         {
-            var conditions = new Condition[6]
+            public bool Equals(List<int> x, List<int> y)
             {
-                new Condition(x => x.LastName == "Миз Осборн",
-                    x => x.LastName == "Миз Льюис",
-                    x => x.LastName == "Миз Мартин")
-                    { ItemPosition = Condition.Position.Between },
-                new Condition(x => x.FirstName == "Эллен",
-                    x => x.FirstName == "Кэти",
-                    x => x.LastName == "Миз Норрис")
-                    { ItemPosition = Condition.Position.Between },
-                new Condition (x => x.LastName == "Миз Льюис",
-                    x => x.FirstName == "Эллен",
-                    x => x.FirstName == "Эллис")
-                    { ItemPosition = Condition.Position.Between },
-                new Condition(x => x.FirstName == "Миз Паркс",
-                    x => x.LastName == "Бетти")
+                return GetHashCode(x) == GetHashCode(y);
+            }
+
+            public int GetHashCode([DisallowNull] List<int> obj)
+            {
+                return Program.GetHashValue(obj);
+            }
+        }
+
+        static void Main()
+        {
+            Condition[] conditions = new Condition[4] {
+                new Condition(x => x.FirstName == "Ваня",
+                    x => x.FirstName == "Сергей")
                     { ItemPosition = Condition.Position.Left },
-                new Condition (x => x.LastName == "Миз Мартин",
-                    x => x.LastName == "Бетти")
+                new Condition (x => x.FirstName == "Ваня",
+                    x => x.FirstName == "Сергея")
                     { ItemPosition = Condition.Position.Right },
-                new Condition (x => x.FirstName == "Дорис")
-                    { ItemPosition = Condition.Position.LastNameEqual }
+                new Condition (x => x.LastName == "Иванов",
+                    x => x.FirstName == "Сергея")
+                    { ItemPosition = Condition.Position.Left},
+                new Condition (x => x.LastName == "Петров",
+                    x => x.LastName == "Сидоров")
+                    { ItemPosition = Condition.Position.Left },
             };
-            Array.Sort(conditions);
-            //var cond = conditions[0];
 
-            var conditionInfoArr = conditions.Select(x => x.AllConditions.Select(GetPropNameAndRequiredValue).ToList()).ToList();
-            SortByLogicalRelationship(conditionInfoArr);
+            List<List<(string propertyName, string neededValue)>> conditionInfoArr = conditions.Select(x => x.AllConditions.Select(GetPropNameAndRequiredValue).ToList()).ToList();
+            List<List<int>> requiredArr = GetAllLogicalArr(conditionInfoArr).Where(x => x.Count == conditionInfoArr.Count).ToList();
 
-            new MyClass(conditionInfoArr);
+            var unique = requiredArr.Distinct(new ArrEqualityComparer()).ToList();
+            var result = new Solution().GetResult(conditions, conditionInfoArr, unique.First());
         }
-        public class MyClass
+        #endregion
+        #region ГОТОВЫЙ КОД
+        public static List<List<int>> GetAllLogicalArr(List<List<(string propertyName, string neededValue)>> conditionArr)
         {
-            List<List<(string propertyName, string neededValue)>> _conditionInfo;
-            CircleList<Person> _result;
-            public MyClass(List<List<(string propertyName, string neededValue)>> conditionInfo)
-            {
-                ShowConditionInfoArr(conditionInfo);
-                //_result = new(conditionInfo.Count);
-                //AddToResult(conditionInfo[0]);
+            List<List<int>> returnArr = new(conditionArr.Count);
 
-                //conditionInfo.RemoveAt(0);
-                //_conditionInfo = conditionInfo;
-                //ShowArray();
-            }
-            void AddToResult(List<(string propertyName, string neededValue)> conditionInfo)
+            for (int index = 0; index < conditionArr.Count; index++)
             {
-                for (int i = 0; i < conditionInfo.Count; i++)
-                {
-                    if (conditionInfo[i].propertyName == "FirstName")
-                        _result.Add(new() { FirstName = conditionInfo[i].neededValue });
-                    else if (conditionInfo[i].propertyName == "LastName")
-                        _result.Add(new() { LastName = conditionInfo[i].neededValue });
-                }
-            }
-            void FirstAction()
-            {
+                List<int> addedArr = new(conditionArr.Count) { index };
+                int tempIndex = index;
 
-            }
-            public void ShowConditionInfoArr(List<List<(string propertyName, string neededValue)>> conditionInfo) 
-            {
-                foreach (var item1 in conditionInfo)
+                for (int i = 0; i < conditionArr.Count; i++)
                 {
-                    foreach (var item in item1)
+                    if (conditionArr[i].Count != 1 && !addedArr.Contains(i) && conditionArr[tempIndex].Any(x => conditionArr[i].Contains(x)))
                     {
-                        string t = item.propertyName.Length == 8 ? "\t\t" : "\t";
-                        Console.WriteLine($"propertyName = {item.propertyName}{t}neededValue = {item.neededValue}");
-                    }
-                    Console.WriteLine();
-                }
-            }
-            public void ShowArray()
-            {
-                foreach (var item in _result)
-                {
-                    Console.WriteLine($"FirstName = {item.FirstName}\tLastName = {item.LastName}");
-                }
-            }
-        }
-        static void SortByLogicalRelationship(List<List<(string propertyName, string neededValue)>> conditionInfo)
-        {
-            //conditionInfo = conditionInfo.Select(x => x.SkipWhile(y => y.neededValue != x[0].neededValue).ToList()).ToList();
-            List<List<(string propertyName, string neededValue)>> newArr = new(conditionInfo.Count);
-            for (int i = 0; i < conditionInfo.Count; i++)
-            {
-                for (int j = 0; j < conditionInfo[i].Count; j++)
-                {
-                    for (int k = 0; k < conditionInfo.Count; k++)
-                    {
-                        for (int l = 0; l < conditionInfo[k].Count; l++)
-                        {
-                            if ( conditionInfo[i][j].neededValue == conditionInfo[k][l].neededValue && !newArr.Contains(conditionInfo[k]))
-                            {
-                                newArr.Add(conditionInfo[k]);
-                                (i, j, k, l) = (i++, 0, k++, 0);
-                            }
-                        }
+                        addedArr.Add(i);
+                        (tempIndex, i) = (i, -1);
                     }
                 }
-            }
-            conditionInfo = newArr;
-        }
-        public static void OperateMainLogic(Condition condition, CircleList<Person> persons, (string propertyName, string neededValue)[] conditionInfo)
-        {
-            if (condition.ItemPosition == Condition.Position.Between)
-            {
-                if (persons.Count == 0)
+
+                for (int i = 0; i < conditionArr.Count; i++)
                 {
-                    var pss = conditionInfo.Select(x =>
-                    {
-                        Person newPerson = null;
-                        switch (x.propertyName)
-                        {
-                            case nameof(Person.FirstName):
-                                newPerson = new Person { FirstName = x.neededValue };
-                                break;
-                            case nameof(Person.LastName):
-                                newPerson = new Person { LastName = x.neededValue };
-                                break;
-                        }
-
-                        return newPerson;
-                    }).ToArray();
-
-                    persons.Add(pss[1]);
-                    persons.Add(pss[0]);
-                    persons.Add(pss[2]);
+                    if (!addedArr.Contains(i))
+                        addedArr.Add(i);
                 }
+                returnArr.Add(addedArr);
             }
+            return returnArr;
+        }
+        public static int GetHashValue(List<int> arr)
+        {
+            if (arr.Count == 0) return 0;
+            int hashCode1 = arr[0], hashCode2 = arr[^1];
+
+            for (int counter = 1; counter < arr.Count; counter++)
+            {
+                hashCode1 <<= counter;
+                hashCode2 <<= counter;
+                hashCode1 += arr[counter];
+                hashCode2 += arr[^(counter + 1)];
+            }
+
+            return ~hashCode1 * ~hashCode2;
         }
         public static (string propertyName, string neededValue) GetPropNameAndRequiredValue<TSource>(Expression<Func<TSource, bool>> condition)
         {
@@ -156,6 +108,44 @@ namespace Task6
                     (member.Member.Name, constant.Value.ToString()),
                 (_, _) => throw new Exception()
             };
+        }
+        #endregion
+    }
+    class Solution
+    {
+        private Dictionary<Condition.Position, IStrategy> _strategies = new(4);
+        private IStrategy GetOrUpdateStrategy(Condition.Position position)
+        {
+            if (!_strategies.ContainsKey(position))
+            {
+                IStrategy newStrategy = position switch
+                {
+                    Condition.Position.Between => new BetweenStrategy(),
+                    Condition.Position.Right => new RightStrategy(),
+                    Condition.Position.Left => new LeftStrategy(),
+                    Condition.Position.LastNameEqual => new LastNameEqualStrategy(),
+                    _ => throw new Exception()
+                };
+                _strategies.Add(position, newStrategy);
+            }
+            return _strategies[position];
+        }
+
+        public Solution() { }
+
+        public CircleList<Person> GetResult(Condition[] conditions, List<List<(string propertyName, string neededValue)>> conditionInfoArr, List<int> unique)
+        {
+            if (conditionInfoArr.Count != unique.Count)
+                throw new ArgumentException($"Количество элементов {nameof(conditionInfoArr)} и {nameof(unique)} не может быть разным");
+
+            CircleList<Person> returnArr = new(conditions.Length);
+
+            foreach (var index in unique)
+            {
+                IStrategy strategy = GetOrUpdateStrategy(conditions[index].ItemPosition);
+                bool isCorrect = strategy.SetName(returnArr, conditionInfoArr[index]);
+            }
+            return returnArr;
         }
     }
 }
