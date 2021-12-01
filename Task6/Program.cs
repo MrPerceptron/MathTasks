@@ -1,9 +1,31 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Linq.Expressions;
+using Task6.Breakfast;
+using Task6.Breakfast_Test;
+/*
+            Condition[] conditions = new Condition[6] {
+                new Condition(x => x.LastName == "Миз Осборн",
+                    x => x.LastName == "Миз Мартин",
+                    x => x.LastName == "Миз Льюис")
+                    { ItemPosition = Condition.Position.Between },
+                new Condition(x => x.FirstName == "Эллен",
+                    x => x.LastName =="Миз Норрис",
+                    x => x.FirstName == "Кэти")
+                    { ItemPosition = Condition.Position.Between },
+                new Condition (x => x.LastName == "Миз Льюис",
+                    x => x.FirstName == "Эллен",
+                    x => x.FirstName == "Эллис")
+                    { ItemPosition = Condition.Position.Between },
+                new Condition(x => x.LastName == "Миз Паркс",
+                    x => x.FirstName == "Бетти")
+                    { ItemPosition = Condition.Position.Left },
+                new Condition (x => x.FirstName == "Бетти",
+                    x =>x.LastName == "Миз Мартин")
+                    { ItemPosition = Condition.Position.Left },
+                new Condition (x => x.FirstName == "Дорис")
+                    { ItemPosition = Condition.Position.LastNameEqual }
+            };
+            */
+
 /*
 Пять дам завтракают, сидя за круглым столом. Миз Осборн сидит между Миз Льюис и Миз Мартин.
 Эллен сидит между Кэти и Миз Норрис. Миз Льюис сидит между Эллен и Эллис.
@@ -17,135 +39,26 @@ namespace Task6
 {
     public static class Program
     {
-        #region
-        public class ArrEqualityComparer : IEqualityComparer<List<int>>
-        {
-            public bool Equals(List<int> x, List<int> y)
-            {
-                return GetHashCode(x) == GetHashCode(y);
-            }
-
-            public int GetHashCode([DisallowNull] List<int> obj)
-            {
-                return Program.GetHashValue(obj);
-            }
-        }
-
         static void Main()
         {
+            //var conditions = BreakfastConditionsGenerator.GetConditions();
+            //(CircleList<Person> answer, bool isSolved) = new Solution().GetSolution(conditions);
+
             Condition[] conditions = new Condition[4] {
-                new Condition(x => x.FirstName == "Ваня",
-                    x => x.FirstName == "Сергей")
-                    { ItemPosition = Condition.Position.Left },
-                new Condition (x => x.FirstName == "Ваня",
-                    x => x.FirstName == "Сергея")
-                    { ItemPosition = Condition.Position.Right },
-                new Condition (x => x.LastName == "Иванов",
-                    x => x.FirstName == "Сергея")
-                    { ItemPosition = Condition.Position.Left},
-                new Condition (x => x.LastName == "Петров",
-                    x => x.LastName == "Сидоров")
-                    { ItemPosition = Condition.Position.Left },
+                new Condition(x=>x.LastName == "Миз Льюис", x=>x.LastName == "Миз Осборн", x=>x.FirstName == "Бэти") { ItemPosition = Condition.Position.Between },
+                new Condition(x=>x.FirstName == "Бэти", x=>x.LastName == "Миз Осборн", x=>x.FirstName == "Кэти") { ItemPosition = Condition.Position.Between },
+                new Condition(x=>x.FirstName == "Кэти", x=>x.LastName == "Миз Мартин") { ItemPosition = Condition.Position.Left },
+                new Condition(x=>x.FirstName == "Дорис") { ItemPosition = Condition.Position.LastNameEqual },
             };
 
-            List<List<(string propertyName, string neededValue)>> conditionInfoArr = conditions.Select(x => x.AllConditions.Select(GetPropNameAndRequiredValue).ToList()).ToList();
-            List<List<int>> requiredArr = GetAllLogicalArr(conditionInfoArr).Where(x => x.Count == conditionInfoArr.Count).ToList();
-
-            var unique = requiredArr.Distinct(new ArrEqualityComparer()).ToList();
-            var result = new Solution().GetResult(conditions, conditionInfoArr, unique.First());
+            Condition[] conditions2 = new BreakfastConditionsGenerator().GenerateConditions();
+            (CircleList<Person> answer, bool isSolved) = new Solution().GetSolution(conditions2);
+            ShowAnswer(answer);
         }
-        #endregion
-        #region ГОТОВЫЙ КОД
-        public static List<List<int>> GetAllLogicalArr(List<List<(string propertyName, string neededValue)>> conditionArr)
+        public static void ShowAnswer(CircleList<Person> persons)
         {
-            List<List<int>> returnArr = new(conditionArr.Count);
-
-            for (int index = 0; index < conditionArr.Count; index++)
-            {
-                List<int> addedArr = new(conditionArr.Count) { index };
-                int tempIndex = index;
-
-                for (int i = 0; i < conditionArr.Count; i++)
-                {
-                    if (conditionArr[i].Count != 1 && !addedArr.Contains(i) && conditionArr[tempIndex].Any(x => conditionArr[i].Contains(x)))
-                    {
-                        addedArr.Add(i);
-                        (tempIndex, i) = (i, -1);
-                    }
-                }
-
-                for (int i = 0; i < conditionArr.Count; i++)
-                {
-                    if (!addedArr.Contains(i))
-                        addedArr.Add(i);
-                }
-                returnArr.Add(addedArr);
-            }
-            return returnArr;
-        }
-        public static int GetHashValue(List<int> arr)
-        {
-            if (arr.Count == 0) return 0;
-            int hashCode1 = arr[0], hashCode2 = arr[^1];
-
-            for (int counter = 1; counter < arr.Count; counter++)
-            {
-                hashCode1 <<= counter;
-                hashCode2 <<= counter;
-                hashCode1 += arr[counter];
-                hashCode2 += arr[^(counter + 1)];
-            }
-
-            return ~hashCode1 * ~hashCode2;
-        }
-        public static (string propertyName, string neededValue) GetPropNameAndRequiredValue<TSource>(Expression<Func<TSource, bool>> condition)
-        {
-            var expr = (BinaryExpression)condition.Body;
-
-            return (expr.Left, expr.Right) switch
-            {
-                (MemberExpression member, ConstantExpression constant) =>
-                    (member.Member.Name, constant.Value.ToString()),
-                (_, _) => throw new Exception()
-            };
-        }
-        #endregion
-    }
-    class Solution
-    {
-        private Dictionary<Condition.Position, IStrategy> _strategies = new(4);
-        private IStrategy GetOrUpdateStrategy(Condition.Position position)
-        {
-            if (!_strategies.ContainsKey(position))
-            {
-                IStrategy newStrategy = position switch
-                {
-                    Condition.Position.Between => new BetweenStrategy(),
-                    Condition.Position.Right => new RightStrategy(),
-                    Condition.Position.Left => new LeftStrategy(),
-                    Condition.Position.LastNameEqual => new LastNameEqualStrategy(),
-                    _ => throw new Exception()
-                };
-                _strategies.Add(position, newStrategy);
-            }
-            return _strategies[position];
-        }
-
-        public Solution() { }
-
-        public CircleList<Person> GetResult(Condition[] conditions, List<List<(string propertyName, string neededValue)>> conditionInfoArr, List<int> unique)
-        {
-            if (conditionInfoArr.Count != unique.Count)
-                throw new ArgumentException($"Количество элементов {nameof(conditionInfoArr)} и {nameof(unique)} не может быть разным");
-
-            CircleList<Person> returnArr = new(conditions.Length);
-
-            foreach (var index in unique)
-            {
-                IStrategy strategy = GetOrUpdateStrategy(conditions[index].ItemPosition);
-                bool isCorrect = strategy.SetName(returnArr, conditionInfoArr[index]);
-            }
-            return returnArr;
+            foreach (var person in persons)
+                Console.WriteLine($"{person.FirstName}\t{person.LastName}");
         }
     }
 }
