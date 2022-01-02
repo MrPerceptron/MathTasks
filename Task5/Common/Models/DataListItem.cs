@@ -1,4 +1,6 @@
-﻿namespace BreakfastTaskGenerator.Models
+﻿using System;
+
+namespace Task5.Common.Models
 {
     public class DataListItem : Person, IEquatable<DataListItem>
     {

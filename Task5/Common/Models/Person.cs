@@ -1,4 +1,7 @@
-﻿namespace BreakfastTaskGenerator.Models
+﻿using System;
+using Task5.Common.Interfaces;
+
+namespace Task5.Common.Models
 {
     public class Person : ICloneable<Person>, IEquatable<Person>
     {

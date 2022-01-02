@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace BreakfastTaskGenerator.Models
+namespace Task5.Common.Models
 {
     public class PersonsTableList : IEnumerable<DataListItem>, ICloneable
     {

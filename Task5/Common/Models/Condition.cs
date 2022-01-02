@@ -1,7 +1,11 @@
-﻿using System.Diagnostics;
-using BreakfastTaskGenerator.Enums;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using Task5.Common.Enums;
+using Task5.Common.Interfaces;
 
-namespace BreakfastTaskGenerator.Models
+namespace Task5.Common.Models
 {
     [DebuggerDisplay("{ToString()}")]
     public class Condition : IEquatable<Condition>, ICloneable<Condition>
