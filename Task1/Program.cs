@@ -31,7 +31,7 @@ namespace Task1
         {
             try
             {
-                FindNumber(32);
+                FindNumber(8);
             }
             catch (Exception ex)
             {

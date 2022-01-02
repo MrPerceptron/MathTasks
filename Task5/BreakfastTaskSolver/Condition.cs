@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace Task6
+namespace Task6.Models
 {
     public class Condition : IComparable<Condition>
     {
@@ -13,15 +13,14 @@ namespace Task6
             Right = 3,
             LastNameEqual = 4
         }
+        
         public Position ItemPosition { get; set; }
 
         public Expression<Func<Person, bool>>[] AllConditions { get; set; }
+
         public Condition(params Expression<Func<Person, bool>>[] conditions)
         {
-            AllConditions = new Expression<Func<Person, bool>>[conditions.Length];
-
-            for (int i = 0; i < conditions.Length; i++)
-                AllConditions[i] = conditions[i];
+            AllConditions = conditions;
         }
 
         private Dictionary<Position, int> _conditionPriority = new()
@@ -31,6 +30,7 @@ namespace Task6
             { Position.Between, 1 },
             { Position.LastNameEqual, 2 }
         };
+
         public int CompareTo(Condition other)
         {
             int currentPriority = _conditionPriority[this.ItemPosition];

@@ -11,4 +11,10 @@
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Reference Include="BreakfastTaskGenerator">
+	    <HintPath>..\..\..\Task6_Generator\BreakfastTaskGenerator\bin\Release\net5.0\BreakfastTaskGenerator.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+
 </Project>

@@ -8,8 +8,8 @@ namespace Task3
         // Суть в том, чтобы находить количество КВАДРАТОВ, как на шахмотной доске
         static void Main()
         {
-            Console.WriteLine(CalculateCountOfSquaresUsingRecursion(3, 5));
-            Console.WriteLine(CalculateCountOfSquaresUsingLoop(3, 5));
+            Console.WriteLine(CalculateCountOfSquaresUsingRecursion(3, 3));
+            //Console.WriteLine(CalculateCountOfSquaresUsingLoop(3, 5));
         }
 
         public static int CalculateCountOfSquaresUsingRecursion(int x, int y) => (x == 0 || y == 0) ? 0 : x * y + CalculateCountOfSquaresUsingRecursion(x - 1, y - 1);

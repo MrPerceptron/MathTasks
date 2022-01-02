@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Task6.Breakfast_Test
+namespace Tesk6.Tests
 {
     /// <summary>
     /// Обработчик Expression выражений
