@@ -1,5 +1,12 @@
 ﻿using System;
 
+/*
+    Title: Коза на привязи
+
+    Коза пасётся на привязи длиной 6 метров, прикрепленной к наружному углу сарая размером 4 на 5 метров.
+    На какой площади коза может съесть траву?
+ */
+
 namespace Task4
 {
     internal class Program
@@ -14,7 +21,12 @@ namespace Task4
             double thirdPartPerOneCircleWithR1Area = (circleWithR1.Area / 4) * 1;
             double thirdPartPerOnecircleWithR2Area = (circleWithR2.Area / 4) * 1;
 
-            Console.WriteLine(thirdPartPerThreeMainCircleArea + thirdPartPerOneCircleWithR1Area + thirdPartPerOnecircleWithR2Area);
+            double answer =
+                thirdPartPerThreeMainCircleArea +
+                thirdPartPerOneCircleWithR1Area +
+                thirdPartPerOnecircleWithR2Area;
+
+            Console.WriteLine(answer);
         }
     }
 

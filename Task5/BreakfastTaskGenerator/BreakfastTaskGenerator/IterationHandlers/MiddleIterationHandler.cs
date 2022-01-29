@@ -44,7 +44,7 @@ namespace Task5.BreakfastTaskGenerator.IterationHandlers
         /// <returns>Все типы которые не были использованы, за исключением одного</returns>
         private static IEnumerable<PersonNameType> GetDependentNameTypes(DataListItem[] dependentPersons)
         {
-            IEnumerable<DataListItem> personsWithUsedName = dependentPersons.Where(x => x.UsedFirstName || x.UsedLastName); // Возможно это не правильно
+            IEnumerable<DataListItem> personsWithUsedName = dependentPersons.Where(x => x.UsedFirstName || x.UsedLastName);
 
             DataListItem randomSelectedPersonWithUsedName = personsWithUsedName.ElementAt(_rand.Next(personsWithUsedName.Count()));
 

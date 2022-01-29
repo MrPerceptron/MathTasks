@@ -119,7 +119,7 @@ namespace Task5.BreakfastTaskGenerator.IterationHandlers
                 else if ((person.UsedFirstName || person.UsedLastName) == true)
                     return person.UsedFirstName ? PersonNameType.LastName : PersonNameType.FirstName;
             }
-            throw new ArgumentException("Не возможно определить тип");
+            throw new ArgumentException("Не удалось определить тип");
         }
     }
 }

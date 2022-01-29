@@ -1,25 +1,23 @@
 ﻿using System;
 
+/*
+    Title: Полоска бумаги
+
+    Представьте себе длинную узкую полоску бумаги, вытянутую перед вами слева направо. 
+    Представьте, что взялись за ее концы и положили тот конец полоски, что у вас в правой руке, поверх левого.
+    А теперь плотно прижмите полоску и сложите пополам, чтобы получилась складка.
+    Повторите всю операцию полностью на получившейся полоске еще два раза.
+    Сколько всего получится складок? А сколько будет складок, если операцию повторить 10 раз?
+ */
 namespace Task1
 {
     internal class Program
     {
-        /*
-        Iter = 1         value = 1
-        Iter = 2         value = 3
-        Iter = 3         value = 7
-        Iter = 4         value = 15
-        Iter = 5         value = 31
-        Iter = 6         value = 63
-        Iter = 7         value = 127
-        Iter = 8         value = 255
-        Iter = 9         value = 511
-        Iter = 10        value = 1023
-         */
         static void FindNumber(uint x)
         {
             if (x > 31)
                 throw new ArgumentException($"Данное значение нельзя вычислить, поскольку оно выходит за приделы вместимости типа {typeof(uint)}");
+
             uint number = 0;
             for (int i = 0; i < x; i++)
                 number = number * 2 + 1;
@@ -29,14 +27,7 @@ namespace Task1
 
         static void Main()
         {
-            try
-            {
-                FindNumber(8);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            FindNumber(10);
         }
     }
 }

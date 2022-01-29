@@ -18,7 +18,6 @@
     <ProjectReference Include="..\Task5\BreakfastTaskGenerator\BreakfastTaskGenerator.Tests\BreakfastTaskGenerator.Tests.csproj" />
     <ProjectReference Include="..\Task5\BreakfastTaskGenerator\BreakfastTaskGenerator\BreakfastTaskGenerator.csproj" />
     <ProjectReference Include="..\Task5\BreakfastTaskSolver\BreakfastTaskSolver.Tests\BreakfastTaskSolver.Tests.csproj" />
-    <ProjectReference Include="..\Task5\BreakfastTaskSolver\BreakfastTaskSolver\BreakfastTaskSolver.csproj" />
     <ProjectReference Include="..\Task5\Common\Task5.Common.csproj" />
   </ItemGroup>
 

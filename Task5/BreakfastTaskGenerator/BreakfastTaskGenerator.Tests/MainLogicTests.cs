@@ -12,7 +12,7 @@ namespace Task5.BreakfastTaskGenerator.Tests
     {
         const int CountOfGeneratedPersons = 5;
 
-        BaseTableListGenerator _tableListGenerator = new ();
+        BaseTableListGenerator _tableListGenerator = new();
         ConditionsGenerator _conditionsGenerator = new();
         PersonsTableList _personsTableList;
         IEnumerable<Condition> _allConditions;
@@ -20,7 +20,7 @@ namespace Task5.BreakfastTaskGenerator.Tests
         List<Condition> _conditionsWithMyGenerator;
 
         [SetUp]
-        public void Setup() 
+        public void Setup()
         {
             _personsTableList = _tableListGenerator.Generate(CountOfGeneratedPersons);
 
@@ -51,7 +51,7 @@ namespace Task5.BreakfastTaskGenerator.Tests
             }
         }
 
-        private IEnumerable<Condition> GenerateAllConditions() 
+        private IEnumerable<Condition> GenerateAllConditions()
         {
             List<Condition> allConditionsWithoutDependentNameTypes = new(GetAllConditionsWithoutDependentNameTypes());
 

@@ -1,12 +1,9 @@
-﻿using System;
-
-namespace MathThinking
+﻿namespace MathThinking
 {
     internal class Program
     {
         static void Main()
         {
-
         }
     }
 }
