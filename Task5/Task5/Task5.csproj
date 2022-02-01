@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\BreakfastTaskSolver\BreakfastTaskSolver.csproj" />
     <ProjectReference Include="..\BreakfastTaskGenerator\BreakfastTaskGenerator\BreakfastTaskGenerator.csproj" />
     <ProjectReference Include="..\Common\Task5.Common.csproj" />
   </ItemGroup>

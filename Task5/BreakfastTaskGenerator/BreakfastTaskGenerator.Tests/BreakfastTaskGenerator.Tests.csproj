@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Task5.Common.csproj" />
     <ProjectReference Include="..\BreakfastTaskGenerator\BreakfastTaskGenerator.csproj" />
   </ItemGroup>
 

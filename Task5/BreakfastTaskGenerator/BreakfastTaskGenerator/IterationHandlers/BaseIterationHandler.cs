@@ -1,4 +1,5 @@
-﻿using Task5.Common.Enums;
+﻿using CustomizableRandomizer;
+using Task5.Common.Enums;
 using Task5.Common.Models;
 
 namespace Task5.BreakfastTaskGenerator.IterationHandlers
@@ -7,17 +8,33 @@ namespace Task5.BreakfastTaskGenerator.IterationHandlers
     {
         protected readonly static Random _rand = new();
 
+        protected readonly static CustomizableRandomizer<ConditionType> _customizableRandomizer;
+
         protected readonly PersonsTableList _personsTableList;
+
         protected readonly IEnumerable<ConditionType> _notSupportedConditionTypes;
 
-        private static readonly ConditionType[] _conditionTypes = new[]
+        private static readonly ConditionType[] _supportedConditionTypes = new[]
         {
-            ConditionType.Between, // Ещё 1 Between, чтобы был больше шанс на его выпадения
             ConditionType.Between,
             ConditionType.FirstNameEqual,
             ConditionType.Left,
             ConditionType.Right
         };
+
+        static BaseIterationHandler()
+        {
+            var chancesWithConditionTypes = new KeyValuePair<double, ConditionType>[]
+            {
+                new(30, ConditionType.Between),
+                new(30, ConditionType.FirstNameEqual),
+                new(20, ConditionType.Left),
+                new(20, ConditionType.Right),
+            };
+            ChanceValuePairs<ConditionType> chanceValuePairs = new(chancesWithConditionTypes);
+
+            _customizableRandomizer = new CustomizableRandomizer<ConditionType>(chanceValuePairs);
+        }
 
         public BaseIterationHandler(PersonsTableList personTableList)
         {
@@ -25,7 +42,7 @@ namespace Task5.BreakfastTaskGenerator.IterationHandlers
                 throw new ArgumentNullException(nameof(personTableList));
 
             if (personTableList.Length < 2)
-                throw new ArgumentException($"{nameof(personTableList)} не может содержать меньше 2х элементов", nameof(personTableList));
+                throw new ArgumentException($"{nameof(personTableList)} не может содержать меньше 2х элементов");
 
             _personsTableList = personTableList;
             _notSupportedConditionTypes = GetNotSupportedConditionTypes();
@@ -35,7 +52,7 @@ namespace Task5.BreakfastTaskGenerator.IterationHandlers
 
         protected virtual IEnumerable<ConditionType> GetNotSupportedConditionTypes()
         {
-            // Для того, чтобы если например вызвать второй раз этот
+            // Для того, чтобы если например вызвать второй раз этот метод
             if (_notSupportedConditionTypes != null)
                 return _notSupportedConditionTypes;
 
@@ -87,7 +104,7 @@ namespace Task5.BreakfastTaskGenerator.IterationHandlers
 
         protected static ConditionType GetRandomConditionTypeFromAvailables(IEnumerable<ConditionType> except)
         {
-            ConditionType[] availableConditionTypes = _conditionTypes.Where(x => !except.Contains(x)).ToArray();
+            ConditionType[] availableConditionTypes = _supportedConditionTypes.Where(x => !except.Contains(x)).ToArray();
 
             if (availableConditionTypes.Length == 0)
                 throw new Exception("Нет доступных условий");

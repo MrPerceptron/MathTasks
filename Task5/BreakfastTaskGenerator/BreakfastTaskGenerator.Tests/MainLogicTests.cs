@@ -11,9 +11,8 @@ namespace Task5.BreakfastTaskGenerator.Tests
     public class MainLogicTests
     {
         const int CountOfGeneratedPersons = 5;
-
-        BaseTableListGenerator _tableListGenerator = new();
-        ConditionsGenerator _conditionsGenerator = new();
+        readonly BaseTableListGenerator _tableListGenerator = new();
+        readonly ConditionsGenerator _conditionsGenerator = new();
         PersonsTableList _personsTableList;
         IEnumerable<Condition> _allConditions;
 
